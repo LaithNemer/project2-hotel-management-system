@@ -3,8 +3,7 @@ package com.example.HotelManagementSystem.dto;
 import lombok.Data;
 
 @Data
-public class EmployeeDto {
-
+public class AdminDTO {
     private Long id;
     private String username;
     private String password;
@@ -12,11 +11,8 @@ public class EmployeeDto {
     private String lastname;
     private String email;
     private String phone;
-    private String positoion;
     private double salary;
     private int age;
-    private  int admineid;
 
 
 }
-

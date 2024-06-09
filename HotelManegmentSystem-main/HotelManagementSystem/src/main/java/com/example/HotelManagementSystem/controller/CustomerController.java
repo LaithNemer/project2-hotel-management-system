@@ -25,6 +25,8 @@ public class CustomerController {
 
 
 
+
+
     @PostMapping
     public ResponseEntity<Customer>insertCustomer(@RequestBody CustomerDTO customer){
         System.out.println(customer.toString());
@@ -33,6 +35,7 @@ public class CustomerController {
 
     }
 
+    
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers(){
         List<Customer>array=customerService.getCustomers();

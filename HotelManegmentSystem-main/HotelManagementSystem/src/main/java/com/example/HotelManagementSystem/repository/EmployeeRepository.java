@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-//    List<Employee> findByRoleId(Long roleId);
+    List<Employee> findByAdmineId(Long admineId);
+    boolean existsByUsername(String username);
+    Employee findByUsername(String username);
 }
