@@ -1,13 +1,10 @@
 package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.Service.AdmineService;
-import com.example.HotelManagementSystem.Service.EmployeeService;
-import com.example.HotelManagementSystem.Service.Interface.AdminInterface;
+//import com.example.HotelManagementSystem.Service.EmployeeService;
 import com.example.HotelManagementSystem.Service.RoomService;
 import com.example.HotelManagementSystem.dto.AdminDTO;
-import com.example.HotelManagementSystem.dto.EmployeeDto;
 import com.example.HotelManagementSystem.dto.RoomDto;
-import com.example.HotelManagementSystem.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +18,14 @@ public class AdmineController {
 
     private AdmineService admineService;
 
-    private EmployeeService employeeService;
+//    private EmployeeService employeeService;
 
     private RoomService roomService;
 
     @Autowired
-    public AdmineController(AdmineService admineService,EmployeeService employeeService,RoomService roomService) {
+    public AdmineController(AdmineService admineService,RoomService roomService) {
         this.admineService = admineService;
-        this.employeeService = employeeService;
+//        this.employeeService = employeeService;
         this.roomService=roomService;
     }
 
@@ -41,7 +38,7 @@ public class AdmineController {
 
     @GetMapping
     public ResponseEntity<List<AdminDTO>>getAdmin() {
-        List<AdminDTO>array=admineService.getAdllEmployee();
+        List<AdminDTO>array=admineService.getAllAdmine();
         return ResponseEntity.ok(array);
 
     }
@@ -53,60 +50,93 @@ public class AdmineController {
 
     }
 
-    @PostMapping("addemployee")
-    public ResponseEntity<EmployeeDto>updateAdmin( @RequestBody EmployeeDto employeeDto) {
-        EmployeeDto employeeDto1=employeeService.addEmployee(employeeDto);
-        return ResponseEntity.ok(employeeDto1);
+
+    @PostMapping("insertEmployee/{idadmin}")
+    public ResponseEntity<AdminDTO>insertEmployee(@RequestBody AdminDTO adminDTO, @PathVariable(name = "idadmin") int idAdmin) {
+        AdminDTO adminDTO1=admineService.insertEmployee(idAdmin,adminDTO);
+        return ResponseEntity.ok(adminDTO1);
 
     }
 
-    @GetMapping("getemployees/{id}")
-    public ResponseEntity<List<EmployeeDto>>getEmployee(@PathVariable int id) {
-        List<EmployeeDto>array=employeeService.getAllEMployeeForAdmine(id);
-        return ResponseEntity.ok(array);
-
-
-
+    @GetMapping("/getEmployee/{username}")
+    public ResponseEntity<AdminDTO>getOneEmployee(@PathVariable(name = "username") String username){
+        AdminDTO adminDTO=admineService.getOneEmployee(username);
+        return ResponseEntity.ok(adminDTO);
     }
 
-    @GetMapping("getemployee/{id}/{username}")
-    public ResponseEntity<EmployeeDto>getEmployeeById(@PathVariable int id,@PathVariable String username) {
-        EmployeeDto employeeDto=employeeService.getEmployee(id,username);
-        return  ResponseEntity.ok(employeeDto);
-
+    @GetMapping("/getAllEmployee")
+    public ResponseEntity<List<AdminDTO>>getAllEmployee(){
+        List<AdminDTO>array=admineService.getAdllEmployee();
+        return  ResponseEntity.ok(array);
     }
 
-    @DeleteMapping("/deleteEmployee/{idadmin}/{name}")
-    public ResponseEntity<EmployeeDto>DeleteEmployee(@PathVariable(name = "idadmin") int idadmin,@PathVariable(name = "name")String name ){
-
-        EmployeeDto employeeDto=employeeService.deleteEmployee(idadmin,name);
-        return  ResponseEntity.ok(employeeDto);
-
+    @DeleteMapping("{id}")
+    public ResponseEntity<AdminDTO>deleteEmployee(@PathVariable(name = "id")int id ){
+        AdminDTO adminDTO=admineService.deleteEmployee(id);
+        return  ResponseEntity.ok(adminDTO);
     }
-
 
     @PutMapping("{id}")
-    public  ResponseEntity<AdminDTO>updateAdmine(@PathVariable int id ,@RequestBody AdminDTO admin){
-        AdminDTO adminDTO=admineService.updateAdmine(id,admin);
-        return ResponseEntity.ok(adminDTO);
-
-
+    public ResponseEntity<AdminDTO>updateEmployee(@PathVariable(name = "id") int id,@RequestBody AdminDTO adminDTO ){
+        AdminDTO adminDTO1=admineService.updateEmployee(id,adminDTO);
+        return  ResponseEntity.ok(adminDTO1);
     }
 
-    @PutMapping("{id}/{username}")
-    public ResponseEntity<EmployeeDto>updateEmployee(@PathVariable(name = "id") int id ,@PathVariable(name = "username") String username,@RequestBody EmployeeDto employeeDto){
 
-        EmployeeDto employeeDto1=employeeService.updateEmployee(id,username,employeeDto);
-        return  ResponseEntity.ok(employeeDto1);
+//    @PostMapping("addemployee")
+//    public ResponseEntity<EmployeeDto>updateAdmin( @RequestBody EmployeeDto employeeDto) {
+//        EmployeeDto employeeDto1=employeeService.addEmployee(employeeDto);
+//        return ResponseEntity.ok(employeeDto1);
+//
+//    }
+//
+//    @GetMapping("getemployees/{id}")
+//    public ResponseEntity<List<EmployeeDto>>getEmployee(@PathVariable int id) {
+//        List<EmployeeDto>array=employeeService.getAllEMployeeForAdmine(id);
+//        return ResponseEntity.ok(array);
+//
+//
+//
+//    }
+//
+//    @GetMapping("getemployee/{id}/{username}")
+//    public ResponseEntity<EmployeeDto>getEmployeeById(@PathVariable int id,@PathVariable String username) {
+//        EmployeeDto employeeDto=employeeService.getEmployee(id,username);
+//        return  ResponseEntity.ok(employeeDto);
+//
+//    }
+//
+//    @DeleteMapping("/deleteEmployee/{idadmin}/{name}")
+//    public ResponseEntity<EmployeeDto>DeleteEmployee(@PathVariable(name = "idadmin") int idadmin,@PathVariable(name = "name")String name ){
+//
+//        EmployeeDto employeeDto=employeeService.deleteEmployee(idadmin,name);
+//        return  ResponseEntity.ok(employeeDto);
+//
+//    }
 
-
-    }
-
-    @DeleteMapping("{id}/{name}")
-    public  ResponseEntity<EmployeeDto>deleteEmployee(@PathVariable(name = "id")int id ,@PathVariable String name ){
-        EmployeeDto employeeDto=employeeService.deleteEmpolyeeById(id,name);
-        return  ResponseEntity.ok(employeeDto);
-    }
+//
+//    @PutMapping("{id}")
+//    public  ResponseEntity<AdminDTO>updateAdmine(@PathVariable int id ,@RequestBody AdminDTO admin){
+//        AdminDTO adminDTO=admineService.updateAdmine(id,admin);
+//        return ResponseEntity.ok(adminDTO);
+//
+//
+//    }
+//
+//    @PutMapping("{id}/{username}")
+//    public ResponseEntity<EmployeeDto>updateEmployee(@PathVariable(name = "id") int id ,@PathVariable(name = "username") String username,@RequestBody EmployeeDto employeeDto){
+//
+//        EmployeeDto employeeDto1=employeeService.updateEmployee(id,username,employeeDto);
+//        return  ResponseEntity.ok(employeeDto1);
+//
+//
+//    }
+//
+//    @DeleteMapping("{id}/{name}")
+//    public  ResponseEntity<EmployeeDto>deleteEmployee(@PathVariable(name = "id")int id ,@PathVariable String name ){
+//        EmployeeDto employeeDto=employeeService.deleteEmpolyeeById(id,name);
+//        return  ResponseEntity.ok(employeeDto);
+//    }
 
 
 

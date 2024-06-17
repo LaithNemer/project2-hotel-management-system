@@ -19,11 +19,10 @@ public class Admine {
     private String lastname;
     private String email;
     private String phone;
+    private String role;
     private double salary;
     private int age;
 
-    @OneToMany(  cascade = {CascadeType.ALL},mappedBy = "admine")
-    private List<Employee> employee;
 
     @OneToMany( cascade = {CascadeType.ALL},mappedBy = "admine")
     private List<Room> room;

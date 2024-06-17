@@ -130,8 +130,12 @@ public class CustomerService implements CustomerInterface {
             throw new BadRequestException("Customer", "passwords do not match");
         }
 
+
         Customer customer=customerRepository.findById(id).get();
-        System.out.println(customer.toString());
+        if(!customer.getPassword().equals(changePasswordDTO.getOldpassword())){
+            throw new BadRequestException("Customer","Old password is not correct");
+        }
+//        System.out.println(customer.toString());
         customer.setPassword(changePasswordDTO.getNewpassword());
         customerRepository.save(customer);
         CustomerDTO customerDTO=new CustomerDTO();

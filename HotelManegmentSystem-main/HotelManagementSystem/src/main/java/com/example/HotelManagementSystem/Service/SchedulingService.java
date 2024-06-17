@@ -1,8 +1,6 @@
 package com.example.HotelManagementSystem.Service;
 
 import com.example.HotelManagementSystem.Service.Interface.SchedulingInterface;
-import com.example.HotelManagementSystem.dto.AdminDTO;
-import com.example.HotelManagementSystem.dto.EmployeeDto;
 import com.example.HotelManagementSystem.dto.SchedulingDTO;
 import com.example.HotelManagementSystem.entity.Admine;
 import com.example.HotelManagementSystem.entity.Scheduling;
@@ -10,10 +8,7 @@ import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
 import com.example.HotelManagementSystem.repository.SchedulingRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +16,21 @@ import java.util.List;
 @Service
 public class SchedulingService implements SchedulingInterface {
 
-    @Autowired
     private SchedulingRepositry schedulingRepositry;
 
-    @Autowired
+
     AdmineRepositry admineRepositry;
 
+//    @Autowired
+//    EmployeeService employeeService;
+
+
+
     @Autowired
-    EmployeeService employeeService;
-
-
-    public SchedulingService(SchedulingRepositry SchedulingRepositry,AdmineRepositry admineRepositry,EmployeeService employeeService) {
+    public SchedulingService(SchedulingRepositry SchedulingRepositry,AdmineRepositry admineRepositry) {
         this.schedulingRepositry = SchedulingRepositry;
         this.admineRepositry = admineRepositry;
-        this.employeeService = employeeService;
+//        this.employeeService = employeeService;
     }
 
 
@@ -44,7 +40,7 @@ public class SchedulingService implements SchedulingInterface {
 
         String name=scheduling.getEmployename();
         int idAdmine=scheduling.getAdminid();
-        List<EmployeeDto>array=employeeService.getAllEMployeeForAdmine(idAdmine);
+        List<Admine>array=admineRepositry.findAll();
         int flag=-1;
         for(int i=0;i<array.size();i++){
             if(scheduling.getEmployename().equals(array.get(i).getUsername() )){
@@ -58,6 +54,10 @@ public class SchedulingService implements SchedulingInterface {
         }
         scheduling1.setNote(scheduling.getNote());
         Admine admine=admineRepositry.getById(scheduling.getAdminid());
+        if(!admine.getRole().equals("admin")){
+            throw new BadRequestException("Admin","role");
+
+        }
         scheduling1.setAdmine(admine);
         scheduling1.setStatus(scheduling.getStatus());
         scheduling1.setEmployeename((scheduling.getEmployename()));

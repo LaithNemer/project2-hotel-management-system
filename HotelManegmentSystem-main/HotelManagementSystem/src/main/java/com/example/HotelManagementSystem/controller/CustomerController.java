@@ -71,8 +71,8 @@ public class CustomerController {
 
     }
 
-    @PostMapping("{email}/{password}")
-    public ResponseEntity<String>LoginCustomer(@PathVariable String email, @PathVariable String password){
+    @PostMapping("/{email}/{password}")
+    public ResponseEntity<String>LoginCustomer(@PathVariable(name = "email") String email, @PathVariable(name = "password") String password){
 
         String IsExitORNot=customerService.logIn(email,password);
         return ResponseEntity.ok(IsExitORNot);
@@ -80,8 +80,8 @@ public class CustomerController {
     }
 
 
-    @PutMapping("changepassword/{id}")
-    public ResponseEntity<CustomerDTO>changePassword(@PathVariable int id , @RequestBody ChangePasswordDTO changePasswordDTO){
+    @PutMapping("/changepassword/{id}")
+    public ResponseEntity<CustomerDTO>changePassword(@PathVariable(name = "id") int id , @RequestBody ChangePasswordDTO changePasswordDTO){
 
         System.out.println(changePasswordDTO.toString());
         CustomerDTO customerDTO=customerService.changePassword(id,changePasswordDTO);

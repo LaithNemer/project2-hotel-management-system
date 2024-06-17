@@ -14,7 +14,7 @@ public class CustomerDTO {
     private String lastname;
     private String email;
     private String phone;
-    private List<Integer> reservationid;
+//    private List<Integer> reservationid;
 
 
 

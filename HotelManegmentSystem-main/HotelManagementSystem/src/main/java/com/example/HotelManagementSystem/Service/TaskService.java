@@ -4,9 +4,12 @@ import com.example.HotelManagementSystem.Service.Interface.TaskInterface;
 import com.example.HotelManagementSystem.dto.SchedulingDTO;
 import com.example.HotelManagementSystem.dto.TaskDTO;
 import com.example.HotelManagementSystem.entity.Admine;
+import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.entity.Scheduling;
 import com.example.HotelManagementSystem.entity.Task;
+import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
+import com.example.HotelManagementSystem.repository.RoomRepository;
 import com.example.HotelManagementSystem.repository.SchedulingRepositry;
 import com.example.HotelManagementSystem.repository.TaskRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +23,15 @@ public class TaskService implements TaskInterface {
 
     private TaskRepositry taskRepositry;
     private SchedulingRepositry schedulingRepositry;
+    private RoomRepository roomRepository;
+
 
 
     @Autowired
-    public TaskService(TaskRepositry taskRepositry, SchedulingRepositry schedulingRepositry) {
+    public TaskService(TaskRepositry taskRepositry, SchedulingRepositry schedulingRepositry,RoomRepository roomRepository) {
         this.taskRepositry = taskRepositry;
         this.schedulingRepositry=schedulingRepositry;
+        this.roomRepository=roomRepository;
     }
 
     @Override
@@ -37,14 +43,28 @@ public class TaskService implements TaskInterface {
         task.setStartDate(taskDTO.getStartDate());
 
 
+
+
+
         List<Scheduling>array=schedulingRepositry.findAll();
+        int flags=-1;
         for(int i=0;i<array.size();i++){
             if(array.get(i).getId()==taskDTO.getSchedulingId()){
                 Scheduling scheduling=array.get(i);
                 task.setScheduling(scheduling);
+                flags=i;
 
             }
         }
+
+        if(flags==-1){
+            throw  new BadRequestException("Scheduling","Does not exist");
+        }
+
+
+        Room room=roomRepository.getById(taskDTO.getRoomnumber());
+        System.out.println(room.toString());
+        task.setRoom(room);
 
         taskRepositry.save(task);
         taskDTO.setId(task.getId());

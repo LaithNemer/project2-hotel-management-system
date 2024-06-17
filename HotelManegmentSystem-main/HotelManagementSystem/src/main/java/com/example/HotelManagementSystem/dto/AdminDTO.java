@@ -14,9 +14,10 @@ public class AdminDTO {
     private String email;
     private String phone;
     private double salary;
+    private String role;
     private int age;
 
-    private List<Integer> roomid;
+//    private List<Integer> roomid;
 
 
 }

@@ -8,6 +8,6 @@ import java.util.List;
 public interface AdmineRepositry  extends JpaRepository<Admine, Integer> {
     boolean  existsByEmail(String email);
     List<Admine> findByEmail(String email);
-
+    Admine findByUsername(String username);
 
 }
