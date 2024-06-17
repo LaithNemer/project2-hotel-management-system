@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class ReservationDto {
 
-    private Long id;
-    private Long customerId;
+    private int id;
+    private int customerId;
     private Date checkInDate;
     private Date checkOutDate;
     private String status;
-    private List<Long>rooms;
+    private List<Integer>roomnumber;
 }

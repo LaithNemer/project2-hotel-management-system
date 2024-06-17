@@ -17,22 +17,23 @@ import java.util.List;
 public class Reservation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @OneToMany
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private List<Room> rooms;
 
-
-
+    @Temporal(TemporalType.TIMESTAMP)
     private Date checkInDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date checkOutDate;
+
     private String status; // Confirmed, Cancelled, Pending
 
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Invoice invoice;
-
 }

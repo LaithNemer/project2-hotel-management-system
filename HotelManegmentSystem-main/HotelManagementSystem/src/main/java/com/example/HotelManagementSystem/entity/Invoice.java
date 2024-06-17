@@ -17,7 +17,7 @@ import java.util.Date;
 public class Invoice implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @OneToOne
     private Reservation reservation;

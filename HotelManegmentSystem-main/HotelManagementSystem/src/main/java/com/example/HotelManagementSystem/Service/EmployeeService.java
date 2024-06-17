@@ -66,7 +66,7 @@ public class EmployeeService  implements EmployeeInterface {
     @Override
     public List<EmployeeDto> getAllEMployeeForAdmine(int id) {
 
-    List<Employee>employees= employeeRepository.findByAdmineId((long) id);
+    List<Employee>employees= employeeRepository.findByAdmineId(id);
         return employees.stream().map(employee -> {
             EmployeeDto dto = new EmployeeDto();
             dto.setId(employee.getId());
@@ -87,22 +87,100 @@ public class EmployeeService  implements EmployeeInterface {
 
     @Override
     public EmployeeDto getEmployee(int id, String username) {
-        Employee employee=employeeRepository.findByUsername(username);
         EmployeeDto dto = new EmployeeDto();
-        dto.setId(employee.getId());
-        dto.setUsername(employee.getUsername());
-        dto.setPassword(employee.getPassword());
-        dto.setFirstname(employee.getFirstname());
-        dto.setLastname(employee.getLastname());
-        dto.setEmail(employee.getEmail());
-        dto.setPhone(employee.getPhone());
-        dto.setPositoion(employee.getPosition());
-        dto.setSalary(employee.getSalary());
-        dto.setAge(employee.getAge());
-        dto.setAdmineid(id);
+        List<EmployeeDto>array=getAllEMployeeForAdmine(id);
+        for(int i=0;i<array.size();i++){
+            if(array.get(i).getUsername().equals(username)){
+                Employee employee=employeeRepository.findByUsername(username);
+                dto.setId(employee.getId());
+                dto.setUsername(employee.getUsername());
+                dto.setPassword(employee.getPassword());
+                dto.setFirstname(employee.getFirstname());
+                dto.setLastname(employee.getLastname());
+                dto.setEmail(employee.getEmail());
+                dto.setPhone(employee.getPhone());
+                dto.setPositoion(employee.getPosition());
+                dto.setSalary(employee.getSalary());
+                dto.setAge(employee.getAge());
+                dto.setAdmineid(id);
+
+
+            }
+        }
+
 
 
         return  dto;
+    }
+
+    @Override
+    public EmployeeDto deleteEmployee(int idadmin, String name) {
+
+
+        EmployeeDto employeeDto=getEmployee(idadmin,name);
+        if(employeeDto.getUsername()==null){
+
+            throw new BadRequestException("user name ","does not exist");
+
+        }
+
+
+        employeeRepository.deleteById(employeeDto.getId());
+        return  employeeDto;
+
+
+
+
+
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(int id, String  username, EmployeeDto employeeDto) {
+
+        Admine admine=new Admine();
+       List<Admine>admines=admineRepositry.findAll();
+       int flags=-1;
+       for(int i=0;i<admines.size();i++){
+           if(admines.get(i).getId()==id){
+               flags=i;
+
+           }
+       }
+       if(flags==-1){
+           throw  new BadRequestException("User ","because does not exsit");
+       }
+
+       EmployeeDto emp=getEmployee(id,username);
+       emp.setPositoion(employeeDto.getPositoion());
+       emp.setAge(employeeDto.getAge());
+       emp.setLastname(employeeDto.getLastname());
+       emp.setEmail(employeeDto.getEmail());
+       emp.setPassword(employeeDto.getPassword());
+       emp.setFirstname(employeeDto.getFirstname());
+       emp.setSalary(employeeDto.getSalary());
+       emp.setUsername(employeeDto.getUsername());
+       EmployeeDto lastUpdate=addEmployee(emp);
+
+       return  lastUpdate;
+
+
+
+
+
+
+
+
+    }
+
+    @Override
+    public EmployeeDto deleteEmpolyeeById(int id, String name) {
+
+        EmployeeDto employeeDto=getEmployee(id,name);
+
+        System.out.println(employeeDto.toString());
+        employeeRepository.deleteById(employeeDto.getId());
+        return  employeeDto;
+
     }
 
 

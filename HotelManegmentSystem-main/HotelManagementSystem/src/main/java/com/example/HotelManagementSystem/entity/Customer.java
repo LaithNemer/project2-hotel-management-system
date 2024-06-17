@@ -13,7 +13,7 @@ import java.util.List;
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String username;
     private String password;
@@ -22,8 +22,8 @@ public class Customer implements Serializable {
     private String email;
     private String phone;
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Reservation> reservations;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservations;
 
 
 }

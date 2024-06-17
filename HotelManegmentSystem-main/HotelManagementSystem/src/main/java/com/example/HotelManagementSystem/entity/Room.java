@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,19 +15,38 @@ import java.util.List;
 public class Room implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int roomNumber;
 
-    private String roomNumber;
-    private String status; // Available, Occupied, Maintenance, etc.
+    private String status;
     private String type;
+    private int capacity;
+    private int price;
+    private String description;
+    private String availability;
+    private int size;
+
+    @ManyToOne
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "room")
+    private Task task;
+
+    @ManyToOne
+    private Admine admine;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    Reservation reservation;
-
-
-    @OneToOne(cascade = CascadeType.ALL)
-    Task task;
-
-
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomNumber=" + roomNumber +
+                ", status='" + status + '\'' +
+                ", type='" + type + '\'' +
+                ", capacity=" + capacity +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", availability='" + availability + '\'' +
+                ", size=" + size +
+                '}';
+    }
 }

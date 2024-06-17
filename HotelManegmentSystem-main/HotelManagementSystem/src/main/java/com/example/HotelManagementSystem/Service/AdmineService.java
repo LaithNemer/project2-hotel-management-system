@@ -71,6 +71,57 @@ public class AdmineService implements AdminInterface {
 
     }
 
+    @Override
+    public AdminDTO updateAdmine(int id, AdminDTO admin) {
+
+        Admine admine=admineRepositry.getById(id);
+        admine.setSalary(admin.getSalary());
+        admine.setPhone(admin.getPhone());
+        admine.setAge(admin.getAge());
+        admine.setLastname(admin.getLastname());
+        admine.setFirstname(admin.getFirstname());
+        admine.setPassword(admin.getPassword());
+        admine.setUsername(admin.getUsername());
+        admine.setEmail(admin.getEmail());
+
+
+        admineRepositry.save(admine);
+
+
+        AdminDTO ad=getAdmin(id);
+
+
+        return  ad;
+
+
+
+
+
+    }
+
+    @Override
+    public String logIn(String email, String password) {
+        List<Admine>array=admineRepositry.findByEmail(email);
+        if(array.size()==0){
+            return  "no account using this email and password";
+        }
+        int flags=-1;
+        Admine admine=new Admine();
+
+        for(int i=0;i<array.size();i++){
+            if(array.get(i).getPassword().equals(password)){
+                flags=i;
+                admine=array.get(i);
+            }
+        }
+        if(flags==-1){
+            return "User Does not exsit...check from Password";
+        }
+
+
+        return  "Welcome "  + admine.getUsername();
+    }
+
     private AdminDTO mapToDTO(Admine admine) {
         AdminDTO adminDTO = new AdminDTO();
         adminDTO.setId(admine.getId());

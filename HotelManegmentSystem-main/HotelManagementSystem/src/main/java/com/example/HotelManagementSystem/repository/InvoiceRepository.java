@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
+public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 //    List<Invoice> findByReservationId(Long reservationId);
 //    List<Invoice> findByStatus(String status);
 }

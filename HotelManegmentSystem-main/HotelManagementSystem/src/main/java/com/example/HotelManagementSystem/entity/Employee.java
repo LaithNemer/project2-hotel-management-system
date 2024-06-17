@@ -16,7 +16,7 @@ import java.util.List;
 public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String username;
     private String password;
@@ -28,12 +28,22 @@ public class Employee implements Serializable {
     private double salary;
     private int age;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Admine admine;
 
-
-
-
-
-
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", position='" + position + '\'' +
+                ", salary=" + salary +
+                ", age=" + age +
+                '}';
+    }
 }

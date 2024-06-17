@@ -8,8 +8,8 @@ import java.util.Date;
 @Data
 public class InvoiceDto {
 
-    private Long id;
-    private Long reservationId;
+    private int id;
+    private int reservationId;
     private BigDecimal amount;
     private Date issuedDate;
     private Date dueDate;

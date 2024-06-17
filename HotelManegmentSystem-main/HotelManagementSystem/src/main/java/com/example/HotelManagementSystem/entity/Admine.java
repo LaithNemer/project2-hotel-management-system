@@ -12,7 +12,7 @@ import java.util.List;
 public class Admine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String username;
     private String password;
     private String firstname;
@@ -22,7 +22,10 @@ public class Admine {
     private double salary;
     private int age;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "admine")
+    @OneToMany(  cascade = {CascadeType.ALL},mappedBy = "admine")
     private List<Employee> employee;
+
+    @OneToMany( cascade = {CascadeType.ALL},mappedBy = "admine")
+    private List<Room> room;
 
 }

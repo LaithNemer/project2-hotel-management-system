@@ -11,15 +11,15 @@ import java.util.Date;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private Date startDate;
     private Date endDate;
     private String type;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Scheduling scheduling;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Room room;
 
 }

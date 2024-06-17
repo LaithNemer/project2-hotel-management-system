@@ -4,10 +4,17 @@ import lombok.Data;
 
 @Data
 public class RoomDto {
-
-    private Long id;
-    private String roomNumber;
+    private int roomNumber;
     private String status;
-    private Long reservationId;
-    private Long taskId;
+    private String type;
+    private int capacity;
+    private int price;
+    private String description;
+    private String availability;
+    private int size;
+    private int reservationId;
+    private int taskId;
+
+    private int adminid;
+
 }

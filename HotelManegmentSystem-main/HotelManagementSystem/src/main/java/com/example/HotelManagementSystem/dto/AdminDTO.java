@@ -2,9 +2,11 @@ package com.example.HotelManagementSystem.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AdminDTO {
-    private Long id;
+    private int id;
     private String username;
     private String password;
     private String firstname;
@@ -13,6 +15,8 @@ public class AdminDTO {
     private String phone;
     private double salary;
     private int age;
+
+    private List<Integer> roomid;
 
 
 }

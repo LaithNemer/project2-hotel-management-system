@@ -1,5 +1,6 @@
 package com.example.HotelManagementSystem.Service;
 
+import com.example.HotelManagementSystem.Service.Interface.CustomerInterface;
 import com.example.HotelManagementSystem.dto.ChangePasswordDTO;
 import com.example.HotelManagementSystem.dto.CustomerDTO;
 import com.example.HotelManagementSystem.entity.Customer;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 
 @Service
-public class CustomerService {
+public class CustomerService implements CustomerInterface {
 
 
       CustomerRepository customerRepository;
@@ -24,6 +25,7 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
+    @Override
     public Customer insertCustomer(CustomerDTO customerDTO) {
         if (customerDTO.getUsername() == null || customerDTO.getUsername().isEmpty()) {
             throw new BadRequestException("Customer", "username");
@@ -46,11 +48,13 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    @Override
     public List<Customer>getCustomers(){
         return  customerRepository.findAll();
     }
 
-    public CustomerDTO getCustomer(long id) {
+    @Override
+    public CustomerDTO getCustomer(int id) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
             CustomerDTO customerDTO=new CustomerDTO();
@@ -70,7 +74,8 @@ public class CustomerService {
         }
     }
 
-    public Customer updateCustomer(long id, CustomerDTO custmr) {
+    @Override
+    public Customer updateCustomer(int id, CustomerDTO custmr) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
@@ -98,7 +103,8 @@ public class CustomerService {
         }
     }
 
-    public boolean deleteCustomer(long id) {
+    @Override
+    public boolean deleteCustomer(int id) {
         if(customerRepository.existsById(id)){
             customerRepository.deleteById(id);
             return true;
@@ -106,6 +112,7 @@ public class CustomerService {
         return false;
     }
 
+    @Override
     public String logIn(String email,String password){
         List<Customer>array=customerRepository.findByEmail(email);
         if(array.get(0).getPassword().equals(password)){
@@ -115,7 +122,10 @@ public class CustomerService {
 
     }
 
-    public CustomerDTO changePassword(long id, ChangePasswordDTO changePasswordDTO){
+
+
+    @Override
+    public CustomerDTO changePassword(int id, ChangePasswordDTO changePasswordDTO){
         if(!changePasswordDTO.getNewpassword().equals(changePasswordDTO.getConfirmpassword())){
             throw new BadRequestException("Customer", "passwords do not match");
         }

@@ -5,8 +5,10 @@ import lombok.Data;
 @Data
 public class SchedulingDTO {
 
-    private Long id;
+    private int id;
     private String status;
-    private Long employeeId;
+    private int adminid;
+    private String note;
+    private String employename;
 
 }
