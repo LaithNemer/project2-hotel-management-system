@@ -11,8 +11,8 @@ public class ReservationDto {
 
     private int id;
     private int customerId;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private String checkInDate;
+    private String checkOutDate;
     private String status;
     private List<Integer>roomnumber;
 }

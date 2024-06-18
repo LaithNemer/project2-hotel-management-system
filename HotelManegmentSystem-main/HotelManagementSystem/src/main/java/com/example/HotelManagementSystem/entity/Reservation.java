@@ -23,14 +23,12 @@ public class Reservation implements Serializable {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reservation")
     private List<Room> rooms;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date checkInDate;
+    private String checkInDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date checkOutDate;
+    private String checkOutDate;
 
     private String status; // Confirmed, Cancelled, Pending
 

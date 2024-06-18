@@ -4,9 +4,11 @@ import com.example.HotelManagementSystem.Service.Interface.RoomInterface;
 import com.example.HotelManagementSystem.dto.AdminDTO;
 import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.entity.Admine;
+import com.example.HotelManagementSystem.entity.Reservation;
 import com.example.HotelManagementSystem.entity.Room;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
+import com.example.HotelManagementSystem.repository.ReservationRepositry;
 import com.example.HotelManagementSystem.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,14 @@ public class RoomService implements RoomInterface {
 
     private RoomRepository roomRepository;
     private AdmineRepositry admineRepositry;
+    private ReservationRepositry reservationRepositry;
 
 
     @Autowired
-    public RoomService(RoomRepository roomRepository , AdmineRepositry admineRepositry) {
+    public RoomService(RoomRepository roomRepository , AdmineRepositry admineRepositry,ReservationRepositry reservationRepositry) {
         this.roomRepository = roomRepository;
         this.admineRepositry=admineRepositry;
+        this.reservationRepositry = reservationRepositry;
 
     }
 
@@ -67,6 +71,7 @@ public class RoomService implements RoomInterface {
                 roomDto.setSize(rooms.get(i).getSize());
                 roomDto.setDescription(rooms.get(i).getDescription());
                 roomDto.setAdminid(id);
+                roomDto.setReservationId(rooms.get(i).getReservation().getId());
                 roomDtos.add(roomDto);
 
             }
@@ -142,5 +147,62 @@ public class RoomService implements RoomInterface {
 
         return roomDtos;
     }
+
+    @Override
+    public List<RoomDto> getRequestReservation(int id) {
+        List<Room>rooms=roomRepository.findAll();
+        List<RoomDto> roomDtos=new ArrayList<>();
+        for(int i=0;i<rooms.size();i++){
+
+            RoomDto roomDto=new RoomDto();
+            if(rooms.get(i).getAdmine().getId()==id){
+                if(rooms.get(i).getStatus().equals("Reservation request")){
+                    roomDto.setRoomNumber(rooms.get(i).getRoomNumber());
+                    roomDto.setStatus(rooms.get(i).getStatus());
+                    roomDto.setType(rooms.get(i).getType());
+                    roomDto.setCapacity(rooms.get(i).getCapacity());
+                    roomDto.setPrice(rooms.get(i).getPrice());
+                    roomDto.setAvailability(rooms.get(i).getAvailability());
+                    roomDto.setSize(rooms.get(i).getSize());
+                    roomDto.setDescription(rooms.get(i).getDescription());
+                    roomDto.setAdminid(id);
+                    roomDto.setReservationId(rooms.get(i).getReservation().getId());
+                    roomDtos.add(roomDto);
+                }
+
+
+            }
+        }
+        return roomDtos;
+    }
+
+    @Override
+    public RoomDto updaetOnRequestReservation(RoomDto roomDto) {
+        Room room=roomRepository.getById(roomDto.getRoomNumber());
+        Reservation reservation=reservationRepositry.getById(roomDto.getReservationId());
+
+        if(roomDto.getStatus().equals("rejected")){
+            room.setStatus("available");
+             room.setReservation(null);;
+            roomRepository.save(room);
+
+            reservation.setStatus(roomDto.getStatus());
+            reservationRepositry.save(reservation);
+        }
+        else{
+            room.setStatus(roomDto.getStatus());
+            Reservation reservation1=reservationRepositry.getById(roomDto.getReservationId());
+            room.setReservation(reservation1);
+            System.out.println(reservation.toString());
+            reservation.setStatus(roomDto.getStatus());
+            reservationRepositry.save(reservation);
+        }
+
+
+
+        return roomDto;
+    }
+
+
 
 }

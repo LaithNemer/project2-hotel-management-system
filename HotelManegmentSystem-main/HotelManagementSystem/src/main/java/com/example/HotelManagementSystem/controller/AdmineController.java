@@ -5,6 +5,7 @@ import com.example.HotelManagementSystem.Service.AdmineService;
 import com.example.HotelManagementSystem.Service.RoomService;
 import com.example.HotelManagementSystem.dto.AdminDTO;
 import com.example.HotelManagementSystem.dto.RoomDto;
+import com.example.HotelManagementSystem.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,6 +82,25 @@ public class AdmineController {
         AdminDTO adminDTO1=admineService.updateEmployee(id,adminDTO);
         return  ResponseEntity.ok(adminDTO1);
     }
+
+
+    @GetMapping("/ViewReservationRequest/{id}")
+    public ResponseEntity<List<RoomDto>>viewReservationRequest(@PathVariable(name = "id")int id){
+        List<RoomDto>array=roomService.getRequestReservation(id);
+        return ResponseEntity.ok(array);
+
+
+    }
+
+    @PutMapping("/Replay")
+    public ResponseEntity<RoomDto>replay(@RequestBody RoomDto roomDto){
+        RoomDto roomDto1=roomService.updaetOnRequestReservation(roomDto);
+        return ResponseEntity.ok(roomDto1);
+
+    }
+
+
+
 
 
 //    @PostMapping("addemployee")

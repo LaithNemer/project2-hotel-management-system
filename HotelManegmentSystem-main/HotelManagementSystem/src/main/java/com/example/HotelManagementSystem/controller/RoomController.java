@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.controller;
 
 import com.example.HotelManagementSystem.Service.RoomService;
+import com.example.HotelManagementSystem.dto.ReservationDto;
 import com.example.HotelManagementSystem.dto.RoomDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

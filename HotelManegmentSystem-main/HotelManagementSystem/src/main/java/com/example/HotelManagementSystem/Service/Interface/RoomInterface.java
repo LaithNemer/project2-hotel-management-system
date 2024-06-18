@@ -1,5 +1,6 @@
 package com.example.HotelManagementSystem.Service.Interface;
 
+import com.example.HotelManagementSystem.Service.RoomService;
 import com.example.HotelManagementSystem.dto.RoomDto;
 
 import java.util.List;
@@ -17,4 +18,8 @@ public interface RoomInterface {
     List<RoomDto> getAvailbleRoom(int id);
 
     List<RoomDto> getAllAvalinleRoom();
+
+    List<RoomDto> getRequestReservation(int id);
+
+    RoomDto updaetOnRequestReservation(RoomDto roomDto);
 }
