@@ -22,7 +22,6 @@ public class SchedulingController {
 
     @PostMapping
     public ResponseEntity<SchedulingDTO> addScheduling(@RequestBody SchedulingDTO scheduling) {
-        System.out.println(scheduling.toString());
         SchedulingDTO schedulingDTO=schedulingService.insertScheduling(scheduling);
 
         return ResponseEntity.ok(schedulingDTO);
@@ -51,6 +50,7 @@ public class SchedulingController {
         return  ResponseEntity.ok(schedulingDTO);
 
     }
+
 
 
 

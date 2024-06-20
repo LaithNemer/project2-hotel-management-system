@@ -30,8 +30,25 @@ public class Reservation implements Serializable {
 
     private String checkOutDate;
 
-    private String status; // Confirmed, Cancelled, Pending
+    private String status;
+    private String arrivalDate;
+    private String exitDate;
+
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Invoice invoice;
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", rooms=" + rooms +
+                ", checkInDate='" + checkInDate + '\'' +
+                ", checkOutDate='" + checkOutDate + '\'' +
+                ", status='" + status + '\'' +
+                ", arrivalDate='" + arrivalDate + '\'' +
+                ", exitDate='" + exitDate + '\'' +
+                ", invoice=" + invoice +
+                '}';
+    }
 }

@@ -14,5 +14,7 @@ public class ReservationDto {
     private String checkInDate;
     private String checkOutDate;
     private String status;
+    private String arrivalDate;
+    private String exitDate;
     private List<Integer>roomnumber;
 }

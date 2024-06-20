@@ -10,8 +10,7 @@ public class InvoiceDto {
 
     private int id;
     private int reservationId;
-    private BigDecimal amount;
-    private Date issuedDate;
-    private Date dueDate;
+    private double totalprice;
+    private int numberofroom;
     private String status;
 }

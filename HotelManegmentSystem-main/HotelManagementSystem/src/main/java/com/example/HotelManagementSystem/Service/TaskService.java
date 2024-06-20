@@ -84,6 +84,7 @@ public class TaskService implements TaskInterface {
         taskDTO.setStartDate(task.getStartDate());
         taskDTO.setEndDate(task.getEndDate());
         taskDTO.setSchedulingId(task.getScheduling().getId());
+        taskDTO.setRoomnumber(task.getRoom().getRoomNumber());
             taskDTO.setId(task.getId());
         return taskDTO;
 
@@ -92,11 +93,13 @@ public class TaskService implements TaskInterface {
     @Override
     public TaskDTO deleteTask(int id) {
 
+        Task task=taskRepositry.getById(id);
         TaskDTO taskDTO=getTask(id);
         System.out.println(
                 taskDTO.toString()
         );
-        taskRepositry.deleteById(id);
+        taskRepositry.delete(task);
+//       taskRepositry.deleteById(taskDTO.getId());
         return taskDTO;
     }
 
@@ -113,6 +116,7 @@ public class TaskService implements TaskInterface {
                 taskDTO.setType(array.get(i).getType());
                 taskDTO.setStartDate(array.get(i).getStartDate());
                 taskDTO.setEndDate(array.get(i).getEndDate());
+                taskDTO.setRoomnumber(array.get(i).getRoom().getRoomNumber());
                 taskDTOList.add(taskDTO);
 
             }

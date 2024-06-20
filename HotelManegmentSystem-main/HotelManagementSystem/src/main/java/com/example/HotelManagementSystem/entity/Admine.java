@@ -1,7 +1,11 @@
 package com.example.HotelManagementSystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -13,18 +17,15 @@ public class Admine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String username;
-    private String password;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
     private String role;
     private double salary;
-    private int age;
 
 
     @OneToMany( cascade = {CascadeType.ALL},mappedBy = "admine")
     private List<Room> room;
+    @OneToOne
+    @JsonIgnore
+    private User user;
+
 
 }

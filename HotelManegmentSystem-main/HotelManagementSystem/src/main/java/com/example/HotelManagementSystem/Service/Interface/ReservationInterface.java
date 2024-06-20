@@ -18,4 +18,8 @@ public interface ReservationInterface {
     ReservationDto deleteReservation(int id);
 
     ReservationDto deleteReservationForOneRoom(int id, int roomnumber);
+
+    List<ReservationDto> getAllApprovmentReservation();
+
+    ReservationDto insertCheckInAndCheckOut(ReservationDto reservationDto);
 }

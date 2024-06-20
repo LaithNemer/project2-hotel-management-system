@@ -3,10 +3,14 @@ package com.example.HotelManagementSystem.Service;
 import com.example.HotelManagementSystem.Service.Interface.SchedulingInterface;
 import com.example.HotelManagementSystem.dto.SchedulingDTO;
 import com.example.HotelManagementSystem.entity.Admine;
+import com.example.HotelManagementSystem.entity.Employee;
 import com.example.HotelManagementSystem.entity.Scheduling;
+import com.example.HotelManagementSystem.entity.User;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
+import com.example.HotelManagementSystem.repository.EmployeeRepositry;
 import com.example.HotelManagementSystem.repository.SchedulingRepositry;
+import com.example.HotelManagementSystem.repository.UserRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +20,10 @@ import java.util.List;
 @Service
 public class SchedulingService implements SchedulingInterface {
 
+    private final UserRepositry userRepositry;
     private SchedulingRepositry schedulingRepositry;
 
+    private EmployeeRepositry employeeRepositry;
 
     AdmineRepositry admineRepositry;
 
@@ -27,38 +33,48 @@ public class SchedulingService implements SchedulingInterface {
 
 
     @Autowired
-    public SchedulingService(SchedulingRepositry SchedulingRepositry,AdmineRepositry admineRepositry) {
+    public SchedulingService(SchedulingRepositry SchedulingRepositry, AdmineRepositry admineRepositry, EmployeeRepositry employeeRepositry, UserRepositry userRepositry) {
         this.schedulingRepositry = SchedulingRepositry;
         this.admineRepositry = admineRepositry;
+        this.employeeRepositry=employeeRepositry;
 //        this.employeeService = employeeService;
+        this.userRepositry = userRepositry;
     }
 
 
     @Override
     public SchedulingDTO insertScheduling(SchedulingDTO scheduling) {
         Scheduling scheduling1=new Scheduling();
-
-        String name=scheduling.getEmployename();
-        int idAdmine=scheduling.getAdminid();
-        List<Admine>array=admineRepositry.findAll();
+System.out.println(scheduling.toString());
+        List<Employee>employees=employeeRepositry.findAll();
+        String name="";
         int flag=-1;
-        for(int i=0;i<array.size();i++){
-            if(scheduling.getEmployename().equals(array.get(i).getUsername() )){
-                flag=i;
-            }
+        for(int i=0;i<employees.size();i++){
 
+            if(employees.get(i).getName().equals(scheduling.getEmployename())){
+                flag=i;
+                name=scheduling.getEmployename();
+                System.out.println(employees.get(i).toString());
+                break;
+            }
         }
+
+
+        System.out.println(name);
+
 
         if(flag==-1){
             throw new BadRequestException("Employee", "employee name: " + name);
         }
         scheduling1.setNote(scheduling.getNote());
-        Admine admine=admineRepositry.getById(scheduling.getAdminid());
-        if(!admine.getRole().equals("admin")){
+//        Admine admine=admineRepositry.getById(scheduling.getAdminid());
+        User user=userRepositry.getById(scheduling.getAdminid());
+
+        if(!user.getRole().name().toLowerCase().equals("admin")){
             throw new BadRequestException("Admin","role");
 
         }
-        scheduling1.setAdmine(admine);
+        scheduling1.setAdmine(user.getAdmin());
         scheduling1.setStatus(scheduling.getStatus());
         scheduling1.setEmployeename((scheduling.getEmployename()));
         schedulingRepositry.save(scheduling1);

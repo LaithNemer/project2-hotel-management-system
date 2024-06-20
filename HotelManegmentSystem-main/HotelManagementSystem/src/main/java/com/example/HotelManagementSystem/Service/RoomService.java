@@ -6,28 +6,31 @@ import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.entity.Admine;
 import com.example.HotelManagementSystem.entity.Reservation;
 import com.example.HotelManagementSystem.entity.Room;
+import com.example.HotelManagementSystem.entity.User;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
 import com.example.HotelManagementSystem.repository.ReservationRepositry;
 import com.example.HotelManagementSystem.repository.RoomRepository;
+import com.example.HotelManagementSystem.repository.UserRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoomService implements RoomInterface {
 
     private RoomRepository roomRepository;
-    private AdmineRepositry admineRepositry;
+    private UserRepositry userRepositry;
     private ReservationRepositry reservationRepositry;
 
 
     @Autowired
-    public RoomService(RoomRepository roomRepository , AdmineRepositry admineRepositry,ReservationRepositry reservationRepositry) {
+    public RoomService(RoomRepository roomRepository ,UserRepositry userRepositry,ReservationRepositry reservationRepositry) {
         this.roomRepository = roomRepository;
-        this.admineRepositry=admineRepositry;
+        this.userRepositry=userRepositry;
         this.reservationRepositry = reservationRepositry;
 
     }
@@ -35,7 +38,11 @@ public class RoomService implements RoomInterface {
     @Override
     public RoomDto insertRoom(RoomDto room) {
 
-        Admine admine=admineRepositry.getById(room.getAdminid());
+      Optional<User>  user=userRepositry.findById(room.getAdminid());
+      if(!user.isPresent()) {
+          throw  new BadRequestException("Admin","Role");
+      }
+
         Room room1=new Room();
        room1.setRoomNumber(room.getRoomNumber());
        room1.setStatus(room.getStatus());
@@ -45,7 +52,7 @@ public class RoomService implements RoomInterface {
        room1.setAvailability(room.getAvailability());
        room1.setSize(room.getSize());
         room1.setDescription(room.getDescription());
-        room1.setAdmine(admine);
+        room1.setAdmine(user.get().getAdmin());
         roomRepository.save(room1);
         room.setRoomNumber(room1.getRoomNumber());
         return  room    ;
@@ -71,7 +78,11 @@ public class RoomService implements RoomInterface {
                 roomDto.setSize(rooms.get(i).getSize());
                 roomDto.setDescription(rooms.get(i).getDescription());
                 roomDto.setAdminid(id);
-                roomDto.setReservationId(rooms.get(i).getReservation().getId());
+                if(! (rooms.get(i).getReservation()==null)){
+                 roomDto.setReservationId(rooms.get(i).getReservation().getId());
+
+                }
+
                 roomDtos.add(roomDto);
 
             }

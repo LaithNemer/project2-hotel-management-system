@@ -5,7 +5,7 @@
 //
 //import java.util.List;
 //@Repository
-//public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+//public interface EmployeeRepository extends JpaRepository<, Integer> {
 //    List<Employee> findByAdmineId(int admineId);
 //    boolean existsByUsername(String username);
 //    Employee findByUsername(String username);

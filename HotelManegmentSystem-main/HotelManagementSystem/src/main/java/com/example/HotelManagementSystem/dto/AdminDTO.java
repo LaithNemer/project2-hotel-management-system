@@ -1,5 +1,7 @@
 package com.example.HotelManagementSystem.dto;
 
+import com.example.HotelManagementSystem.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -7,17 +9,9 @@ import java.util.List;
 @Data
 public class AdminDTO {
     private int id;
-    private String username;
-    private String password;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
     private double salary;
     private String role;
-    private int age;
-
-//    private List<Integer> roomid;
+    private User user;
 
 
 }

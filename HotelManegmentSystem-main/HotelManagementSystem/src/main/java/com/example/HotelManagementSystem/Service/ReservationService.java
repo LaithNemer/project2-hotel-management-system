@@ -34,6 +34,7 @@ public class ReservationService implements ReservationInterface {
 
     @Override
     public boolean insertReservation(ReservationDto reservationDto) {
+
         Customer customer = customerRepository.getById(reservationDto.getCustomerId());
 
         Reservation reservation = new Reservation();
@@ -133,7 +134,7 @@ public class ReservationService implements ReservationInterface {
         for(int i=0;i<reservations.size();i++){
             Customer customer=customerRepository.getById(reservations.get(i).getCustomer().getId());
             ReservationDto reservationDto=new ReservationDto();
-            if(customer.getUsername().equals(username)&& reservations.get(i).getCheckInDate().equals(startdate)){
+            if(customer.getUser().getUsername().equals(username)&& reservations.get(i).getCheckInDate().equals(startdate)){
 
                 reservationDto.setId(reservations.get(i).getId());
                 reservationDto.setCustomerId(reservations.get(i).getCustomer().getId());
@@ -199,6 +200,53 @@ public class ReservationService implements ReservationInterface {
         reservationDto.setRoomnumber(temp);
         reservationRepository.deleteById(id);
 
+        return reservationDto;
+    }
+
+    @Override
+    public List<ReservationDto> getAllApprovmentReservation() {
+        List<Reservation>reservations=reservationRepository.findAll();
+        List<ReservationDto>array=new ArrayList<>();
+        for(int i=0;i<reservations.size();i++){
+            if(reservations.get(i).getStatus().toLowerCase().equals("approve")){
+                ReservationDto reservationDto=new ReservationDto();
+                reservationDto.setId(reservations.get(i).getId());
+                reservationDto.setCustomerId(reservations.get(i).getId());
+                reservationDto.setCheckInDate(reservations.get(i).getCheckInDate());
+                reservationDto.setCheckOutDate(reservations.get(i).getCheckOutDate());
+                reservationDto.setStatus("approve");
+                reservationDto.setArrivalDate(reservations.get(i).getArrivalDate());
+                reservationDto.setExitDate(reservations.get(i).getExitDate());
+                List<Integer>roomnumber=new ArrayList<>();
+                for(int j=0;j<reservations.get(i).getRooms().size();j++){
+                    roomnumber.add(reservations.get(i).getRooms().get(j).getRoomNumber());
+                }
+               reservationDto.setRoomnumber(roomnumber);
+                array.add(reservationDto);
+
+
+            }
+        }
+
+        return array;
+    }
+
+    @Override
+    public ReservationDto insertCheckInAndCheckOut(ReservationDto reservationDto) {
+        Reservation reservation=reservationRepository.getById(reservationDto.getId());
+        reservationDto.setStatus(reservation.getStatus());
+        reservationDto.setCustomerId(reservation.getCustomer().getId());
+        reservationDto.setCheckOutDate(reservation.getCheckOutDate());
+        reservationDto.setCheckInDate(reservation.getCheckInDate());
+        List<Integer>numberRoom=new ArrayList<>();
+        for (int i =0;i<reservation.getRooms().size();i++){
+            numberRoom.add(reservation.getRooms().get(i).getRoomNumber());
+
+        }
+        reservationDto.setRoomnumber(numberRoom);
+        reservation.setArrivalDate(reservationDto.getArrivalDate());
+        reservation.setExitDate(reservationDto.getExitDate());
+        reservationRepository.save(reservation);
         return reservationDto;
     }
 

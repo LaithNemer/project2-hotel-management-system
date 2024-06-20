@@ -2,11 +2,14 @@ package com.example.HotelManagementSystem.controller;
 
 
 import com.example.HotelManagementSystem.Service.CustomerService;
+import com.example.HotelManagementSystem.Service.InvoiceService;
 import com.example.HotelManagementSystem.Service.RoomService;
 import com.example.HotelManagementSystem.dto.ChangePasswordDTO;
 import com.example.HotelManagementSystem.dto.CustomerDTO;
+import com.example.HotelManagementSystem.dto.InvoiceDto;
 import com.example.HotelManagementSystem.dto.RoomDto;
 import com.example.HotelManagementSystem.entity.Customer;
+import com.example.HotelManagementSystem.entity.Invoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +23,14 @@ public class CustomerController {
 
      private  CustomerService customerService;
      private RoomService roomService;
+     private InvoiceService invoiceService;
 
 
     @Autowired
-    public CustomerController(CustomerService customerService,RoomService roomService) {
+    public CustomerController(CustomerService customerService,RoomService roomService,InvoiceService invoiceService) {
         this.customerService = customerService;
         this.roomService=roomService;
+        this.invoiceService=invoiceService;
 
     }
 
@@ -34,17 +39,17 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<Customer>insertCustomer(@RequestBody CustomerDTO customer){
+    public ResponseEntity<CustomerDTO>insertCustomer(@RequestBody CustomerDTO customer){
         System.out.println(customer.toString());
-    Customer customer1=customerService.insertCustomer(customer);
+    CustomerDTO customer1=customerService.insertCustomer(customer);
         return ResponseEntity.ok(customer1);
 
     }
 
     
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers(){
-        List<Customer>array=customerService.getCustomers();
+    public ResponseEntity<List<CustomerDTO>> getAllCustomers(){
+        List<CustomerDTO>array=customerService.getCustomers();
         return ResponseEntity.ok(array);
 
     }
@@ -56,9 +61,9 @@ public class CustomerController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable int id,@RequestBody CustomerDTO customer){
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable int id,@RequestBody CustomerDTO customer){
         System.out.println(customer.toString());
-        Customer customer1=customerService.updateCustomer(id,customer);
+        CustomerDTO customer1=customerService.updateCustomer(id,customer);
         return ResponseEntity.ok(customer1);
 
     }
@@ -71,9 +76,9 @@ public class CustomerController {
 
     }
 
-    @PostMapping("/{email}/{password}")
+    @PostMapping("{email}/{password}")
     public ResponseEntity<String>LoginCustomer(@PathVariable(name = "email") String email, @PathVariable(name = "password") String password){
-
+    System.out.println(email);
         String IsExitORNot=customerService.logIn(email,password);
         return ResponseEntity.ok(IsExitORNot);
 
@@ -96,5 +101,14 @@ public class CustomerController {
         List<RoomDto>array=roomService.getAllAvalinleRoom();
         return  ResponseEntity.ok(array);
     }
+
+    @PostMapping("/insertInvoice/{id}")
+    public ResponseEntity<InvoiceDto>insertInvoce(@PathVariable(name = "id") int id ){
+        InvoiceDto invoiceDto=invoiceService.insertInvoiceForCustomer(id);
+
+        return  ResponseEntity.ok(invoiceDto);
+
+    }
+
 
 }

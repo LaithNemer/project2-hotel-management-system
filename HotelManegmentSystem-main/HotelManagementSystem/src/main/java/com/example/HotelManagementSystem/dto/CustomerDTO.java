@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.dto;
 
 //import com.example.HotelManagementSystem.entity.Reservation;
+import com.example.HotelManagementSystem.entity.User;
 import lombok.Data;
 
 import java.util.List;
@@ -8,13 +9,11 @@ import java.util.List;
 @Data
 public class CustomerDTO {
     private int id;
-    private String username;
-    private String password;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
-//    private List<Integer> reservationid;
+    private User user;
+
+
+
+
 
 
 

@@ -1,89 +1,94 @@
 package com.example.HotelManagementSystem.controller;
 
+
 import com.example.HotelManagementSystem.Service.AdmineService;
-//import com.example.HotelManagementSystem.Service.EmployeeService;
+import com.example.HotelManagementSystem.Service.InvoiceService;
+import com.example.HotelManagementSystem.Service.ReservationService;
 import com.example.HotelManagementSystem.Service.RoomService;
-import com.example.HotelManagementSystem.dto.AdminDTO;
-import com.example.HotelManagementSystem.dto.RoomDto;
-import com.example.HotelManagementSystem.entity.Room;
+import com.example.HotelManagementSystem.dto.*;
+import com.example.HotelManagementSystem.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("adminn")
 public class AdmineController {
 
     private AdmineService admineService;
-
-//    private EmployeeService employeeService;
-
+    private InvoiceService invoiceService;
     private RoomService roomService;
+    private ReservationService reservationService;
 
     @Autowired
-    public AdmineController(AdmineService admineService,RoomService roomService) {
+    public AdmineController(AdmineService admineService,RoomService roomService,ReservationService reservationService,InvoiceService invoiceService) {
         this.admineService = admineService;
-//        this.employeeService = employeeService;
+        this.reservationService=reservationService;
         this.roomService=roomService;
+        this.invoiceService=invoiceService;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<AdminDTO>insertAdmin(@RequestBody AdminDTO adminDTO) {
-
         AdminDTO adminDTO1=admineService.addAdmine(adminDTO);
         return ResponseEntity.ok(adminDTO1);
     }
 
     @GetMapping
-    public ResponseEntity<List<AdminDTO>>getAdmin() {
-        List<AdminDTO>array=admineService.getAllAdmine();
+    public ResponseEntity<List<User>>getAdmin() {
+        List<User>array=admineService.getAllAdmine();
         return ResponseEntity.ok(array);
 
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<AdminDTO>getAdminById(@PathVariable int id) {
-        AdminDTO adminDTO=admineService.getAdmin(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<User>getAdminById(@PathVariable int id) {
+        User adminDTO=admineService.getAdmin(id);
         return  ResponseEntity.ok(adminDTO);
 
     }
 
 
-    @PostMapping("insertEmployee/{idadmin}")
-    public ResponseEntity<AdminDTO>insertEmployee(@RequestBody AdminDTO adminDTO, @PathVariable(name = "idadmin") int idAdmin) {
-        AdminDTO adminDTO1=admineService.insertEmployee(idAdmin,adminDTO);
+
+    @PostMapping("/insertemployee/{id}")
+    public  ResponseEntity<EmployeeDto>addEmployee(@RequestBody AdminDTO adminDTO, @PathVariable int id) {
+        System.out.println(id);
+        EmployeeDto adminDTO1=admineService.insertEmployee(id,adminDTO);
         return ResponseEntity.ok(adminDTO1);
-
     }
-
+//
     @GetMapping("/getEmployee/{username}")
-    public ResponseEntity<AdminDTO>getOneEmployee(@PathVariable(name = "username") String username){
-        AdminDTO adminDTO=admineService.getOneEmployee(username);
+    public ResponseEntity<EmployeeDto>getOneEmployee(@PathVariable(name = "username") String username){
+
+        EmployeeDto adminDTO=admineService.getOneEmployee(username);
         return ResponseEntity.ok(adminDTO);
     }
 
     @GetMapping("/getAllEmployee")
-    public ResponseEntity<List<AdminDTO>>getAllEmployee(){
-        List<AdminDTO>array=admineService.getAdllEmployee();
+    public ResponseEntity<List<EmployeeDto>>getAllEmployee(){
+        List<EmployeeDto>array=admineService.getAdllEmployee();
         return  ResponseEntity.ok(array);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<AdminDTO>deleteEmployee(@PathVariable(name = "id")int id ){
-        AdminDTO adminDTO=admineService.deleteEmployee(id);
+    public ResponseEntity<EmployeeDto>deleteEmployee(@PathVariable(name = "id")int id ){
+        EmployeeDto adminDTO=admineService.deleteEmployee(id);
         return  ResponseEntity.ok(adminDTO);
     }
 
+
+
     @PutMapping("{id}")
-    public ResponseEntity<AdminDTO>updateEmployee(@PathVariable(name = "id") int id,@RequestBody AdminDTO adminDTO ){
-        AdminDTO adminDTO1=admineService.updateEmployee(id,adminDTO);
+    public ResponseEntity<EmployeeDto>updateEmployee(@PathVariable(name = "id") int id,@RequestBody EmployeeDto employeeDto ){
+        System.out.print(employeeDto.toString());
+        EmployeeDto adminDTO1=admineService.updateEmployee(id,employeeDto);
         return  ResponseEntity.ok(adminDTO1);
     }
-
-
+//
+//
+//
+//
     @GetMapping("/ViewReservationRequest/{id}")
     public ResponseEntity<List<RoomDto>>viewReservationRequest(@PathVariable(name = "id")int id){
         List<RoomDto>array=roomService.getRequestReservation(id);
@@ -100,68 +105,28 @@ public class AdmineController {
     }
 
 
+    @GetMapping("/getAllApprovment")
+    public ResponseEntity<List<ReservationDto>>getAllAprovmentReservation(){
+        List<ReservationDto>reservationDtos=reservationService.getAllApprovmentReservation();
+        return  ResponseEntity.ok(reservationDtos);
+    }
 
 
 
-//    @PostMapping("addemployee")
-//    public ResponseEntity<EmployeeDto>updateAdmin( @RequestBody EmployeeDto employeeDto) {
-//        EmployeeDto employeeDto1=employeeService.addEmployee(employeeDto);
-//        return ResponseEntity.ok(employeeDto1);
-//
-//    }
-//
-//    @GetMapping("getemployees/{id}")
-//    public ResponseEntity<List<EmployeeDto>>getEmployee(@PathVariable int id) {
-//        List<EmployeeDto>array=employeeService.getAllEMployeeForAdmine(id);
-//        return ResponseEntity.ok(array);
-//
-//
-//
-//    }
-//
-//    @GetMapping("getemployee/{id}/{username}")
-//    public ResponseEntity<EmployeeDto>getEmployeeById(@PathVariable int id,@PathVariable String username) {
-//        EmployeeDto employeeDto=employeeService.getEmployee(id,username);
-//        return  ResponseEntity.ok(employeeDto);
-//
-//    }
-//
-//    @DeleteMapping("/deleteEmployee/{idadmin}/{name}")
-//    public ResponseEntity<EmployeeDto>DeleteEmployee(@PathVariable(name = "idadmin") int idadmin,@PathVariable(name = "name")String name ){
-//
-//        EmployeeDto employeeDto=employeeService.deleteEmployee(idadmin,name);
-//        return  ResponseEntity.ok(employeeDto);
-//
-//    }
+    @PostMapping("/checkinAndCheckOut")
+    public ResponseEntity<ReservationDto>insertCheckInAndCheckOut(@RequestBody ReservationDto reservationDto){
 
-//
-//    @PutMapping("{id}")
-//    public  ResponseEntity<AdminDTO>updateAdmine(@PathVariable int id ,@RequestBody AdminDTO admin){
-//        AdminDTO adminDTO=admineService.updateAdmine(id,admin);
-//        return ResponseEntity.ok(adminDTO);
-//
-//
-//    }
-//
-//    @PutMapping("{id}/{username}")
-//    public ResponseEntity<EmployeeDto>updateEmployee(@PathVariable(name = "id") int id ,@PathVariable(name = "username") String username,@RequestBody EmployeeDto employeeDto){
-//
-//        EmployeeDto employeeDto1=employeeService.updateEmployee(id,username,employeeDto);
-//        return  ResponseEntity.ok(employeeDto1);
-//
-//
-//    }
-//
-//    @DeleteMapping("{id}/{name}")
-//    public  ResponseEntity<EmployeeDto>deleteEmployee(@PathVariable(name = "id")int id ,@PathVariable String name ){
-//        EmployeeDto employeeDto=employeeService.deleteEmpolyeeById(id,name);
-//        return  ResponseEntity.ok(employeeDto);
-//    }
+        ReservationDto reservationDto1=reservationService.insertCheckInAndCheckOut(reservationDto);
+        return  ResponseEntity.ok(reservationDto1);
+    }
+
+
 
 
 
     @PostMapping("{email}/{password}")
     public ResponseEntity<String>LoginAdmin(@PathVariable(name = "email") String email,@PathVariable(name = "password")String password){
+
         String checking=admineService.logIn(email,password);
 
         return  ResponseEntity.ok(checking);
@@ -169,12 +134,21 @@ public class AdmineController {
 
 
 
-    @GetMapping("searchbyadmin/{idadmin}")
+    @GetMapping("/searchbyadmin/{idadmin}")
     public ResponseEntity<List<RoomDto>>getAllAavailableRoom(@PathVariable(name = "idadmin" )int id){
+        System.out.println("laith");
+
         List<RoomDto>array=roomService.getAvailbleRoom(id);
         return ResponseEntity.ok(array);
 
 
+    }
+
+
+    @GetMapping("/getInvoice/{id}")
+    public  ResponseEntity<InvoiceDto>getInvoice(@PathVariable(name = "id") int id){
+        InvoiceDto invoiceDto=invoiceService.getInvoiseForAdmine(id);
+        return  ResponseEntity.ok(invoiceDto);
     }
 
 

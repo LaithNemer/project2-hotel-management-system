@@ -21,10 +21,9 @@ public class Invoice implements Serializable {
 
     @OneToOne
     private Reservation reservation;
+    private double totalprice;
+    private int numberofroom;
 
-    private BigDecimal amount;
-    private Date issuedDate;
-    private Date dueDate;
     private String status; // Paid, Unpaid
 
 }

@@ -1,6 +1,7 @@
 package com.example.HotelManagementSystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,32 +10,18 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "customers")
+@Table(name = "customer")
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String username;
-    private String password;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
+    @OneToOne
+    @JsonIgnore
+    private User user;
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
+
 }

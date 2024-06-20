@@ -1,55 +1,94 @@
 package com.example.HotelManagementSystem.Service;
 
+import com.example.HotelManagementSystem.Configuration.JwtService;
 import com.example.HotelManagementSystem.Service.Interface.AdminInterface;
+import com.example.HotelManagementSystem.auth.AuthenticationResponse;
+import com.example.HotelManagementSystem.auth.AuthenticationService;
 import com.example.HotelManagementSystem.dto.AdminDTO;
+import com.example.HotelManagementSystem.dto.EmployeeDto;
 import com.example.HotelManagementSystem.entity.Admine;
+import com.example.HotelManagementSystem.entity.Employee;
+import com.example.HotelManagementSystem.entity.User;
 import com.example.HotelManagementSystem.exception.BadRequestException;
 import com.example.HotelManagementSystem.repository.AdmineRepositry;
-//import com.example.HotelManagementSystem.repository.EmployeeRepository;
+import com.example.HotelManagementSystem.repository.EmployeeRepositry;
+import com.example.HotelManagementSystem.repository.UserRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
 
 @Service
 public class AdmineService implements AdminInterface {
-    @Autowired
     private AdmineRepositry admineRepositry;
+    private UserRepositry userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authserv;
+    private EmployeeRepositry employeeRepositry;
 
 
 
-    public AdmineService(AdmineRepositry admineRepositry) {
+
+
+    @Autowired
+    public AdmineService(AdmineRepositry admineRepositry, UserRepositry userRepository, JwtService jwtService, AuthenticationManager authenticationManager, AuthenticationService authserv,EmployeeRepositry employeeRepositry) {
         this.admineRepositry = admineRepositry;
+        this.userRepository=userRepository;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.authserv = authserv;
+        this.employeeRepositry=employeeRepositry;
     }
 
     @Override
     public AdminDTO addAdmine(AdminDTO adminDTO) {
-        if (adminDTO.getUsername() == null || adminDTO.getUsername().isEmpty()) {
+
+        if (adminDTO.getUser().getUsername() == null || adminDTO.getUser().getUsername().isEmpty()) {
             throw new BadRequestException("Adimn", "username");
         }
-        if (adminDTO.getEmail() == null || adminDTO.getEmail().isEmpty()) {
+        if (adminDTO.getUser().getEmail() == null || adminDTO.getUser().getEmail().isEmpty()) {
             throw new BadRequestException("Admin", "email");
         }
-        boolean EmailIsExit=admineRepositry.existsByEmail(adminDTO.getEmail());
-        if(EmailIsExit){
+        Optional<Admine>  EmailIsExit=admineRepositry.findByUserEmail(adminDTO.getUser().getEmail());
+        if(EmailIsExit.isPresent()){
             System.out.println("Email Already Exist");
             throw new BadRequestException("Customer", "email"+" email is already exist");
         }
 
+        User user=new User();
+        user.setAge(adminDTO.getUser().getAge());
+        user.setEmail(adminDTO.getUser().getEmail());
+        user.setPassword(adminDTO.getUser().getPassword());
+        user.setRole(adminDTO.getUser().getRole());
+        user.setUsername(adminDTO.getUser().getUsername());
+        user.setPhone(adminDTO.getUser().getPhone());
+
+
         Admine admine=new Admine();
-        admine.setUsername(adminDTO.getUsername());
-        admine.setEmail(adminDTO.getEmail());
-        admine.setPassword(adminDTO.getPassword());
-        admine.setAge(adminDTO.getAge());
-        admine.setPhone(adminDTO.getPhone());
-        admine.setFirstname(adminDTO.getFirstname());
-        admine.setLastname(adminDTO.getLastname());
+        admine.setRole(adminDTO.getUser().getRole().name());
         admine.setSalary(adminDTO.getSalary());
-        admine.setRole(adminDTO.getRole());
-        Admine temp=     admineRepositry.save(admine);
-        adminDTO.setId(temp.getId());
+        admine.setUser(user);
+        user.setAdmin(admine);
+
+        User uss= userRepository.save(user);
+        adminDTO.setId(uss.getId());
+
+
+        var jwtToken = jwtService.generateToken(uss);
+        var refreshToken = jwtService.generateRefreshToken(uss);
+        authserv.saveUserToken(uss, jwtToken);
+        AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+
+
+
 
         return  adminDTO;
 
@@ -58,194 +97,196 @@ public class AdmineService implements AdminInterface {
     }
 
     @Override
-    public List<AdminDTO> getAdllEmployee() {
-        List<Admine> admines = admineRepositry.findAll();
+    public List<EmployeeDto> getAdllEmployee() {
 
-        List<Admine>array=new ArrayList<>();
-        for(int i=0;i<admines.size();i++){
-            if(!admines.get(i).getRole().equals("admin")){
-                array.add(admines.get(i));
-
-            }
+        List<Employee>array=employeeRepositry.findAll();
+        List<EmployeeDto>employeeDtos=new ArrayList<>();
+        for(int i=0;i<array.size();i++){
+            EmployeeDto employeeDto=convertFromEmployeeToEmployeeDte(array.get(i));
+            employeeDto.setId(array.get(i).getId());
+            employeeDtos.add(employeeDto);
         }
-        return array.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+
+        return employeeDtos;
     }
 
     @Override
-    public AdminDTO getAdmin(int id) {
-        Admine admine=admineRepositry.getById(id);
-        if(!admine.getRole().equals("admin")){
-          throw new BadRequestException("Admin", "role");
-        }
+    public User getAdmin(int id) {
+        User user=userRepository.findById(id).get();
 
-        return  mapToDTO(admine);
-
-    }
-
-    @Override
-    public AdminDTO updateAdmine(int id, AdminDTO admin) {
-
-        Admine admine=admineRepositry.getById(id);
-        admine.setSalary(admin.getSalary());
-        admine.setPhone(admin.getPhone());
-        admine.setAge(admin.getAge());
-        admine.setLastname(admin.getLastname());
-        admine.setFirstname(admin.getFirstname());
-        admine.setPassword(admin.getPassword());
-        admine.setUsername(admin.getUsername());
-        admine.setEmail(admin.getEmail());
-
-
-        admineRepositry.save(admine);
-
-
-        AdminDTO ad=getAdmin(id);
-
-
-        return  ad;
-
-
-
+        return user;
 
 
     }
+//
+//    @Override
+//    public AdminDTO updateAdmine(int id, AdminDTO admin) {
+//
+//        Admine admine=admineRepositry.getById(id);
+//        admine.setSalary(admin.getSalary());
+//        admine.setPhone(admin.getPhone());
+//        admine.setAge(admin.getAge());
+//        admine.setLastname(admin.getLastname());
+//        admine.setFirstname(admin.getFirstname());
+//        admine.setPassword(admin.getPassword());
+//        admine.setUsername(admin.getUsername());
+//        admine.setEmail(admin.getEmail());
+//
+//
+//        admineRepositry.save(admine);
+//
+//
+//        AdminDTO ad=getAdmin(id);
+//
+//
+//        return  ad;
+//
+//
+//
+//
+//
+//    }
 
     @Override
     public String logIn(String email, String password) {
-        List<Admine>array=admineRepositry.findByEmail(email);
-        if(array.size()==0){
-            return  "no account using this email and password";
-        }
-        if(!array.get(0).getRole().equals("admin")){
-            return  "Does not have authrized ...not admin";
-        }
-        int flags=-1;
-        Admine admine=new Admine();
 
-        for(int i=0;i<array.size();i++){
-            if(array.get(i).getPassword().equals(password)){
-                flags=i;
-                admine=array.get(i);
-            }
-        }
-        if(flags==-1){
-            return "User Does not exsit...check from Password";
-        }
+       Optional<User>user=userRepository.findByEmail(email);
+       if(user.isPresent()){
+           if(user.get().getPassword().equals(password)){
+               return  "Welcome " + user.get().getUsername();
+           }
+       }
 
 
-        return  "Welcome "  + admine.getUsername();
+       return  "does not have an account using this email and password";
+
     }
 
     @Override
-    public AdminDTO insertEmployee(int idAdmin, AdminDTO adminDTO) {
+    public EmployeeDto insertEmployee(int idAdmin, AdminDTO adminDTO) {
 
+       User user1=getAdmin(idAdmin);
+       System.out.println(user1.getRole().name());
+       String status=user1.getRole().name();
 
-       AdminDTO adminDTO1=getAdmin(idAdmin);
-       if(!adminDTO1.getRole().equals("admin")){
+       if(!status.equals("ADMIN")){
            throw new BadRequestException("Admin", "role");
        }
-        if (adminDTO.getUsername() == null || adminDTO.getUsername().isEmpty()) {
+        if (adminDTO.getUser().getUsername() == null || adminDTO.getUser().getUsername().isEmpty()) {
             throw new BadRequestException("Employee", "username");
         }
-        if (adminDTO.getEmail() == null || adminDTO.getEmail().isEmpty()) {
+        if (adminDTO.getUser().getEmail() == null || adminDTO.getUser().getEmail().isEmpty()) {
             throw new BadRequestException("Employee", "email");
         }
-        boolean EmailIsExit=admineRepositry.existsByEmail(adminDTO.getEmail());
-        if(EmailIsExit){
+        Optional<Admine> EmailIsExit=admineRepositry.findByUserEmail(adminDTO.getUser().getEmail());
+        if(!EmailIsExit.isEmpty()){
             System.out.println("Email Already Exist");
             throw new BadRequestException("Employee", "email"+" email is already exist");
         }
 
-        Admine admine=new Admine();
-        admine.setUsername(adminDTO.getUsername());
-        admine.setEmail(adminDTO.getEmail());
-        admine.setPassword(adminDTO.getPassword());
-        admine.setAge(adminDTO.getAge());
-        admine.setPhone(adminDTO.getPhone());
-        admine.setFirstname(adminDTO.getFirstname());
-        admine.setLastname(adminDTO.getLastname());
-        admine.setSalary(adminDTO.getSalary());
-        admine.setRole(adminDTO.getRole());
-        Admine temp=     admineRepositry.save(admine);
-        adminDTO.setId(temp.getId());
 
-        return  adminDTO;
 
+        Employee employee=new Employee();
+        employee.setRole(adminDTO.getRole());
+        System.out.println(adminDTO.getRole());
+        employee.setName(adminDTO.getUser().getUsername());
+        System.out.println(adminDTO.getUser().getUsername());
+        employee.setPassword(adminDTO.getUser().getPassword());
+        employee.setSalary(adminDTO.getSalary());
+        employee.setEmail(adminDTO.getUser().getEmail());
+        employee.setAge(adminDTO.getUser().getAge());
+        employee.setPhone(adminDTO.getUser().getPhone());
+
+
+        employeeRepositry.save(employee);
+
+
+        return  convertFromEmployeeToEmployeeDte(employee);
+
+
+    }
+    public EmployeeDto convertFromEmployeeToEmployeeDte(Employee employee){
+        EmployeeDto employeeDto=new EmployeeDto();
+        employeeDto.setRole(employee.getRole());
+        employeeDto.setPhone(employee.getPhone());
+        employeeDto.setName(employee.getName());
+        employeeDto.setAge(employee.getAge());
+        employeeDto.setEmail(employee.getEmail());
+        employeeDto.setSalary(employee.getSalary());
+        employeeDto.setPassword(employee.getPassword());
+
+//        employeeDto.setId(employee.getId());
+
+
+
+        return  employeeDto;
 
     }
 
     @Override
-    public AdminDTO getOneEmployee(String username) {
-        Admine admine=admineRepositry.findByUsername(username);
-        return mapToDTO(admine);
+    public EmployeeDto getOneEmployee(String username) {
 
-
-
-    }
-
-    @Override
-    public AdminDTO deleteEmployee(int id) {
-        Admine admine=admineRepositry.getById(id);
-        if (admine.getRole().equals("admin")) {
-
-            throw new BadRequestException("admin","not employee");
-        }
-        admineRepositry.deleteById(id);
-
-        return mapToDTO(admine);
-    }
-
-    @Override
-    public AdminDTO updateEmployee(int id, AdminDTO adminDTO) {
-        Admine admine =admineRepositry.getById(id);
-
-        admine.setRole(adminDTO.getRole());
-        admine.setLastname(adminDTO.getLastname());
-        admine.setFirstname(adminDTO.getFirstname());
-        admine.setPassword(adminDTO.getPassword());
-        admine.setUsername(adminDTO.getUsername());
-        admine.setEmail(adminDTO.getEmail());
-        admine.setAge(adminDTO.getAge());
-        admine.setSalary(adminDTO.getSalary());
-        admine.setPhone(adminDTO.getPhone());
-        admineRepositry.save(admine);
-
-        return  mapToDTO(admine);
+       Employee array=employeeRepositry.findEmployeeByName(username);
+       EmployeeDto employeeDto=convertFromEmployeeToEmployeeDte(array);
+       employeeDto.setId(array.getId());
+       return  employeeDto;
 
     }
 
     @Override
-    public List<AdminDTO> getAllAdmine() {
+    public EmployeeDto deleteEmployee(int id) {
+        Employee employee=employeeRepositry.getById(id);
+       EmployeeDto employeeDto=convertFromEmployeeToEmployeeDte(employee);
+       employeeDto.setId(employee.getId());
+       employeeRepositry.deleteById(id);
 
-        List<Admine> admines = admineRepositry.findAll();
 
-        List<Admine>array=new ArrayList<>();
-        for(int i=0;i<admines.size();i++){
-            if(admines.get(i).getRole().equals("admin")){
-                array.add(admines.get(i));
+        return employeeDto;
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(int id, EmployeeDto employeeDto) {
+        Employee employee=employeeRepositry.getById(id);
+        employee.setName(employeeDto.getName());
+        employee.setSalary(employeeDto.getSalary());
+        employee.setPassword(employeeDto.getPassword());
+        employee.setEmail(employeeDto.getEmail());
+        employee.setAge(employeeDto.getAge());
+        employee.setPhone(employeeDto.getPhone());
+        employeeRepositry.save(employee);
+        employeeDto.setId(id);
+
+        return employeeDto;
+    }
+
+
+    @Override
+    public List<User> getAllAdmine() {
+
+        List<User> users = userRepository.findAll();
+
+
+        List<User>array=new ArrayList<>();
+        for(int i=0;i<users.size();i++){
+
+            if(users.get(i).getRole().name().equals("Admin")){
+                array.add(users.get(i));
 
             }
         }
-        return array.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+
+        return users;
     }
 
 
     private AdminDTO mapToDTO(Admine admine) {
         AdminDTO adminDTO = new AdminDTO();
         adminDTO.setId(admine.getId());
-        adminDTO.setUsername(admine.getUsername());
-        adminDTO.setEmail(admine.getEmail());
-        adminDTO.setPassword(admine.getPassword());
-        adminDTO.setAge(admine.getAge());
-        adminDTO.setPhone(admine.getPhone());
-        adminDTO.setFirstname(admine.getFirstname());
-        adminDTO.setLastname(admine.getLastname());
-        adminDTO.setSalary(admine.getSalary());
+        User user=userRepository.getById(admine.getUser().getId());
+        adminDTO.setUser(user);
         adminDTO.setRole(admine.getRole());
+        adminDTO.setSalary(admine.getSalary());
+
         return adminDTO;
     }
 }
