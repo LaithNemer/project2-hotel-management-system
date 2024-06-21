@@ -133,7 +133,8 @@ This project implements a Hotel Management System designed to streamline operati
 
  ## ER Diagram
 
- 
+ ![Hotel Image](Hotel%20(2).png)
+
 
 ## Build and Run Instructions
 
