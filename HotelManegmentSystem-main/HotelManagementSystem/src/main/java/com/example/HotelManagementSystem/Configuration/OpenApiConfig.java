@@ -13,13 +13,13 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "auther name",
-                        email = "contact@mail.com",
-                        url = "https://some-url.com"
+                        name = "Yazan Karazon",
+                        email = "yazan.kar2000@gmail.com",
+                        url = "https://Hotel-Management-System.com"
                 ),
-                description = "OpenApi documentation for Spring Security",
+                description = "OpenAPI documentation for Hotel Management System",
                 title = "OpenApi specification",
-                version = "1.0",
+                version = "2.0",
                 license = @License(
                         name = "Licence name",
                         url = "https://some-url.com"
@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "https://some-url.com"
+                        url = "https://Hotel-Management-System.com"
                 )
         },
         security = {

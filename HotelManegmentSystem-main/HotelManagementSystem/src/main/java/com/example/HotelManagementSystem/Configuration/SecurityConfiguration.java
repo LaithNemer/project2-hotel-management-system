@@ -33,15 +33,16 @@ public class SecurityConfiguration {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/customers/**").permitAll()
-                        .requestMatchers("/adminn/**").permitAll()
+                        .requestMatchers("/api/v1/customers/**").permitAll()
+                        .requestMatchers("/api/v1/admins/**").permitAll()
                         .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/scheduling/**").permitAll()
-                        .requestMatchers("/room/**").permitAll()
-                        .requestMatchers("/Tasks/**").permitAll()
-                        .requestMatchers("/reservation/**").permitAll()
+                        .requestMatchers("/api/v1/user/register").permitAll()
+                        .requestMatchers("/api/v1/scheduling/**").permitAll()
+                        .requestMatchers("/api/v1/room/**").permitAll()
+                        .requestMatchers("/api/v1/Tasks/**").permitAll()
+                        .requestMatchers("/api/v1/reservation/**").permitAll()
 
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Permit access to Swagger UI
 //                        .requestMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority(CUSTOMER.name(),ADMIN.name())
 //                        .requestMatchers("/admin/**").hasAnyAuthority(ADMIN.name())
 //                        .requestMatchers("/employee/**").hasAnyAuthority(ADMIN.name())
