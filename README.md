@@ -5,7 +5,7 @@ This project implements a Hotel Management System designed to streamline operati
 
 ### Students
 - **Student 1**: Yazan Ramzi AL-Karazon (1181463)
-- **Student 2**: Layth Nemer
+- **Student 2**: Layth Nemer (1202196)
 
 ## Project Resources
 
