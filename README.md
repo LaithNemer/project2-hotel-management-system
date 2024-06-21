@@ -131,6 +131,10 @@ This project implements a Hotel Management System designed to streamline operati
   - `scheduling`: Scheduling associated with the task.
   - `room`: Room assigned to the task.
 
+ ## ER Diagram
+
+ 
+
 ## Build and Run Instructions
 
 ### Prerequisites
@@ -188,7 +192,7 @@ APIs are secured using JWT (JSON Web Token) for authentication. Certain APIs are
 To pull the Docker image for the Hotel Management System project (version 3) from DockerHub, use the following command:
 
 ```bash
-docker pull yazankarazon/project2-hotel-management-system:v3
+docker pull azankarazon/project2-hotel-management-system:tagname
 ```
 
 ## Learning Outcomes
